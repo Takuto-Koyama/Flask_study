@@ -1,10 +1,18 @@
 from email_validator import EmailNotValidError, validate_email
 from flask import Flask, flash, redirect, render_template, request, url_for
+import logging
 
 # Flaskクラスをインスタンス化する
 app = Flask(__name__)
 # SECRET_KEYを追加する
 app.config["SECRET_KEY"] = "2AZSMss3p5QPbcY2hBsJ"
+app.logger.setLevel(logging.DEBUG)
+
+app.logger.critical("fatal error")
+app.logger.error("error")
+app.logger.warning("warning")
+app.logger.info("info")
+app.logger.debug("debug")
 
 
 # URLと実行する関数をマッピングする
