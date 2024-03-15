@@ -1,12 +1,19 @@
 from email_validator import EmailNotValidError, validate_email
 from flask import Flask, flash, redirect, render_template, request, url_for
 import logging
+import os
+from flask_debugtoolbar import DebugToolbarExtension
+from flask_mail import Mail, Message
 
 # Flaskクラスをインスタンス化する
 app = Flask(__name__)
 # SECRET_KEYを追加する
 app.config["SECRET_KEY"] = "2AZSMss3p5QPbcY2hBsJ"
 app.logger.setLevel(logging.DEBUG)
+# リダイレクトを中断しないようにする
+app.config["DEBUG_TB_INTERCEPR_REDIRECTS"] = False
+# DebugToolbarExtensionにアプリケーションをセットする
+toolbar = DebugToolbarExtension(app)
 
 app.logger.critical("fatal error")
 app.logger.error("error")
@@ -14,6 +21,16 @@ app.logger.warning("warning")
 app.logger.info("info")
 app.logger.debug("debug")
 
+# Mailクラスのコンフィグを追加する
+app.config["MAIL_SERVER"] = os.environ.get("MAIL_SERVER")
+app.config["MAIL_PORT"] = os.environ.get("MAIL_PORT")
+app.config["MAIL_USE_TLS"] = os.environ.get("MAIL_USE_TLS")
+app.config["MAIL_USERNAME"] = os.environ.get("MAIL_USERNAME")
+app.config["MAIL_PASSWORD"] = os.environ.get("MAIL_PASSWORD")
+app.config["MAIL_DEFAULT_SENDER"] = os.environ.get("MAIL_DEFAULT_SENDER")
+
+# flask-maik拡張を登録する
+mail = Mail(app)
 
 # URLと実行する関数をマッピングする
 @app.route("/")
@@ -69,7 +86,15 @@ def contact_complete():
             is_valid = False
         if not is_valid:
             return redirect(url_for("contact"))
-        # メールを送る(最後に実装)
+        # メールを送る
+        send_email(
+            email, 
+            "問い合わせありがとうございました。",
+            "contact_mail",
+            username=username,
+            description=description
+        )
+        
         flash("問い合わせ内容はメールにて送信しました。問い合わせありがとうございます。")
         return redirect(url_for("contact_complete"))
 
