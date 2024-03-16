@@ -1,5 +1,5 @@
 from email_validator import EmailNotValidError, validate_email
-from flask import Flask, flash, redirect, render_template, request, url_for
+from flask import Flask, flash, redirect, render_template, request, url_for, make_response, session
 import logging
 import os
 from flask_debugtoolbar import DebugToolbarExtension
@@ -11,7 +11,7 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = "2AZSMss3p5QPbcY2hBsJ"
 app.logger.setLevel(logging.DEBUG)
 # リダイレクトを中断しないようにする
-app.config["DEBUG_TB_INTERCEPR_REDIRECTS"] = False
+app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = False
 # DebugToolbarExtensionにアプリケーションをセットする
 toolbar = DebugToolbarExtension(app)
 
@@ -60,7 +60,15 @@ with app.test_request_context():
 
 @app.route("/contact")
 def contact():
-    return render_template("contact.html")
+    # レスポンスオブジェクトを取得する    
+    response = make_response(render_template("contact.html"))
+    
+    # クッキーを設定する
+    response.set_cookie("flaskbook key", "flaskbook value")
+    
+    # セッションを設定する
+    session["username"] = "ichiro"
+    return response
 
 
 @app.route("/contact/complete", methods=["GET", "POST"])
@@ -102,3 +110,10 @@ def contact_complete():
         return redirect(url_for("contact_complete"))
 
     return render_template("contact_complete.html")
+
+def send_email(to, subject, template, **kwargs):
+    """メールを送信する関数"""
+    msg = Message(subject, recipients=[to])
+    msg.body = render_template(template + ".txt", **kwargs)
+    msg.html = render_template(template + ".html", **kwargs)
+    mail.send(msg)
