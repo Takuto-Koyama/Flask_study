@@ -32,6 +32,7 @@ app.config["MAIL_DEFAULT_SENDER"] = os.environ.get("MAIL_DEFAULT_SENDER")
 # flask-maik拡張を登録する
 mail = Mail(app)
 
+
 # URLと実行する関数をマッピングする
 @app.route("/")
 def index():
@@ -88,14 +89,16 @@ def contact_complete():
             return redirect(url_for("contact"))
         # メールを送る
         send_email(
-            email, 
+            email,
             "問い合わせありがとうございました。",
             "contact_mail",
             username=username,
-            description=description
+            description=description,
         )
-        
-        flash("問い合わせ内容はメールにて送信しました。問い合わせありがとうございます。")
+
+        flash(
+            "問い合わせ内容はメールにて送信しました。問い合わせありがとうございます。"
+        )
         return redirect(url_for("contact_complete"))
 
     return render_template("contact_complete.html")
