@@ -13,7 +13,7 @@ class User(db.Model):
     email = db.Column(db.String, unique=True, index=True)
     password_hash = db.Column(db.String)
     created_at = db.Column(db.DateTime, default=datetime.now)
-    updated_at = db.Column(db.DateTime, defaulr=datetime.now, onupdate=datetime.now)    
+    updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)    
 
     # 　パスワードをリセットするためのプロパティ
     @property
