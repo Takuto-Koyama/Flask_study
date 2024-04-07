@@ -1,5 +1,14 @@
 from email_validator import EmailNotValidError, validate_email
-from flask import Flask, flash, redirect, render_template, request, url_for, make_response, session
+from flask import (
+    Flask,
+    flash,
+    redirect,
+    render_template,
+    request,
+    url_for,
+    make_response,
+    session,
+)
 import logging
 import os
 from flask_debugtoolbar import DebugToolbarExtension
@@ -60,12 +69,12 @@ with app.test_request_context():
 
 @app.route("/contact")
 def contact():
-    # レスポンスオブジェクトを取得する    
+    # レスポンスオブジェクトを取得する
     response = make_response(render_template("contact.html"))
-    
+
     # クッキーを設定する
     response.set_cookie("flaskbook key", "flaskbook value")
-    
+
     # セッションを設定する
     session["username"] = "ichiro"
     return response
@@ -110,6 +119,7 @@ def contact_complete():
         return redirect(url_for("contact_complete"))
 
     return render_template("contact_complete.html")
+
 
 def send_email(to, subject, template, **kwargs):
     """メールを送信する関数"""
